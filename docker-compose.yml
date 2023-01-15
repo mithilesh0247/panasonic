@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  app:
+    restart: always
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    command: >
+      sh -c "python3 manage.py makemigrations && python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+             
+
+  redis:
+    image: redis:alpine
+  sql-server-db:
+    # image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      - SA_PASSWORD=admin@123
+      - SA_HOST=LAPTOP-V7SMD6VV\SCM
+      - SA_DATABASE=scm
+      - ACCEPT_EULA=Y
+    ports:
+      - "5434:1433"
+    # environment:
+    #   HOST : 'LAPTOP-V7SMD6VV\SCM'
+    #   DATABASE : "scm"
+    #   USERNAME : "sa"
+    #   PASSWORD: "admin@123"
+    #   ACCEPT_EULA: "Y"
+  celery:
+    restart: always
+    build:
+      context: .
+    command: > 
+        bash -c "celery -A scm.celery  worker -l info &&
+        celery -A scm.celeryApp beat"
+    # command: celery -A scm.celery  worker -l info
+    
+    # command: celery -A scm.celeryApp beat
+    volumes:
+      - .:/code
+    depends_on:
+      # - db
+      - redis
+      - app

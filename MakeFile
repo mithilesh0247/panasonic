@@ -1,0 +1,8 @@
+migrate:
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py makemigrations scm_app
+    python manage.py migrate scm_app
+
+run-local:
+    python manage.py runserver

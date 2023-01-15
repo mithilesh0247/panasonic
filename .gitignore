@@ -1,0 +1,13 @@
+.vscode
+
+./my_env
+/my_env
+./venv
+/venv
+
+*.pyc
+*/__pycache__/
+*/migrations/
+.env
+*.csv
+*.pdf
